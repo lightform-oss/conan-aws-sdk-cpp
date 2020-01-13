@@ -7,10 +7,11 @@ class AwssdkcppTestConan(ConanFile):
 
     def configure(self):
         if self.settings.compiler == "Visual Studio":
+            # NOTE: These settings must match what's in the top-level conanfile (which is currently fixed to MD)
             if self.settings.build_type == "Release":
-                self.settings.compiler.runtime = "MT"
+                self.settings.compiler.runtime = "MD"
             else:
-                self.settings.compiler.runtime = "MTd"
+                self.settings.compiler.runtime = "MDd"
         self.options["aws-sdk-cpp"].shared = False
         self.options["aws-sdk-cpp"].build_s3 = True
         self.options["aws-sdk-cpp"].build_logs = True
