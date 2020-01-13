@@ -180,14 +180,18 @@ class AwssdkcppConan(ConanFile):
 # These patches were used from the original fork (sdk v1.7.212), but seem unneeded for our use.
 #         # patch the shipped CMakeLists.txt which builds stuff before even declaring a project
 #         tools.patch(patch_file=os.path.join(self.source_folder, "patch-cmakelists.patch"))
-#         tools.patch(patch_file=os.path.join(self.source_folder, "patch-c-libs.patch"))
-#
 #         # This small hack might be useful to guarantee proper /MT /MD linkage in MSVC
 #         # if the packaged project doesn't have variables to set it properly
-#         tools.replace_in_file("aws-sdk-cpp-%s/CMakeLists.txt" % self.version, "project(\"aws-cpp-sdk-all\" VERSION \"${PROJECT_VERSION}\" LANGUAGES CXX)", '''project(aws-cpp-sdk-all VERSION "${PROJECT_VERSION}" LANGUAGES CXX)
-# include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-# conan_basic_setup()
-# ''')
+#         tools.patch(patch_file=os.path.join(self.source_folder, "patch-c-libs.patch"))
+
+        # This ensures the aws cmake will find the requirements (zlib, curl, ssl)
+        tools.replace_in_file(
+            "aws-sdk-cpp-%s/CMakeLists.txt" % self.version,
+            "project(\"aws-cpp-sdk-all\" VERSION \"${PROJECT_VERSION}\" LANGUAGES CXX)",
+'''project(aws-cpp-sdk-all VERSION "${PROJECT_VERSION}" LANGUAGES CXX)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+''')
 
     def build(self):
         cmake = CMake(self)
